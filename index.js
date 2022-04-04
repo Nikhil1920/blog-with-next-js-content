@@ -11,8 +11,10 @@ const getAllSlugs = () => {
         if (err) {
             console.log("Error", err);
         } else {
-            slugs = res.map(function (file) {
-                return file.replace(postsDirectory, "").replace(".md", "");
+            res.forEach((file) => {
+                const path = file.replace(postsDirectory, "");
+                const slug = path.replace("index.md", "").replace(".md", "");
+                slugs.push({ path: path, slug: slug });
             });
             fs.writeFileSync(
                 path.join(process.cwd(), "all-slugs.json"),
@@ -26,7 +28,7 @@ const getAllSlugs = () => {
 const getMetaData = (slugs) => {
     let metaData = [];
     slugs.forEach((slug) => {
-        let filePath = path.join(process.cwd(), "posts", slug, "index.md");
+        let filePath = path.join(process.cwd(), "posts", slug.path);
         let file = fs.readFileSync(filePath, "utf8");
         let meta = matter(file);
         if (meta.data.draft === true) return;
