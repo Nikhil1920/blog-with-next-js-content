@@ -34,7 +34,7 @@ const getMetaData = (slugs) => {
         if (meta.data.draft === true) return;
         meta.data["slug"] = slug.slug;
         metaData.push(meta.data);
-        const fileName = slug.slug.replace(/([^a-z0-9]+)/gi, "-") + ".json";
+        const fileName = slug.slug.replace(/[\\/:"*?<>|]/g, "") + ".json";
         fs.writeFileSync(
             path.join(process.cwd(), "data/posts", fileName),
             JSON.stringify(meta.content)
