@@ -17,7 +17,7 @@ const getAllSlugs = () => {
                 slugs.push({ path: path, slug: slug });
             });
             fs.writeFileSync(
-                path.join(process.cwd(), "all-slugs.json"),
+                path.join(process.cwd(), "data", "all-slugs.json"),
                 JSON.stringify(slugs)
             );
             getMetaData(slugs);
@@ -32,8 +32,13 @@ const getMetaData = (slugs) => {
         let file = fs.readFileSync(filePath, "utf8");
         let meta = matter(file);
         if (meta.data.draft === true) return;
-        meta.data["slug"] = slug;
+        meta.data["slug"] = slug.slug;
         metaData.push(meta.data);
+        const fileName = slug.slug.replace(/([^a-z0-9]+)/gi, "-") + ".json";
+        fs.writeFileSync(
+            path.join(process.cwd(), "data/posts", fileName),
+            JSON.stringify(meta.content)
+        );
     });
 
     // sort metaData by published date
@@ -42,14 +47,14 @@ const getMetaData = (slugs) => {
     });
 
     fs.writeFileSync(
-        path.join(process.cwd(), "meta-data.json"),
+        path.join(process.cwd(), "data", "meta-data.json"),
         JSON.stringify(metaData)
     );
 
     // get 10 latest posts
     let latestPosts = metaData.slice(0, 10);
     fs.writeFileSync(
-        path.join(process.cwd(), "latest-posts.json"),
+        path.join(process.cwd(), "data", "latest-posts.json"),
         JSON.stringify(latestPosts)
     );
 
@@ -66,7 +71,7 @@ const getAllTags = (posts) => {
         });
     });
     fs.writeFileSync(
-        path.join(process.cwd(), "all-tags.json"),
+        path.join(process.cwd(), "data", "all-tags.json"),
         JSON.stringify(tags)
     );
     getPostsByTag(tags, posts);
@@ -78,7 +83,7 @@ const getPostsByTag = (tags, metaData) => {
             return post.tags.includes(tag);
         });
         fs.writeFileSync(
-            path.join(process.cwd(), "tags", tag + ".json"),
+            path.join(process.cwd(), "data/tags", tag + ".json"),
             JSON.stringify(posts)
         );
     });
