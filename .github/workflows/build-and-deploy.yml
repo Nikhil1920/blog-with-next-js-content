@@ -24,7 +24,7 @@ jobs:
             - name: Build site
               run: node index.js
             - name: Deploy to gh-pages
-              uses: JamesIves/github-pages-deploy-action@v4.3.0
+              uses: JamesIves/github-pages-deploy-action@v4.4.1
               with:
                   branch: gh-pages
                   folder: data
